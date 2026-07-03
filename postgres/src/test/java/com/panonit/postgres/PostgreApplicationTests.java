@@ -1,10 +1,10 @@
-package com.panonit.postgre;
+package com.panonit.postgres;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PostgreApplicationTests {
+class PostgresApplicationTests {
 
     @Test
     void contextLoads() {
