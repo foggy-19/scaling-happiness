@@ -111,7 +111,7 @@ public class BookControllerTests {
     }
 
     @Test
-    public void testThatListBooksReturnsBooks() throws Exception {
+    public void testThatListBooksReturnsBooksPage() throws Exception {
         BookDto book = TestDataUtil.getFirstTestBook(null);
 
         service.createBook(book.getIsbn(), book);
@@ -121,9 +121,9 @@ public class BookControllerTests {
                                 .get("/books")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].isbn").value(book.getIsbn()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value(book.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].author").value(book.getAuthor()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].isbn").value(book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].author").value(book.getAuthor()));
     }
 
     @Test

@@ -5,6 +5,8 @@ import com.panonit.restless.domain.entities.BookEntity;
 import com.panonit.restless.mappers.Mapper;
 import com.panonit.restless.repositories.BookRepository;
 import com.panonit.restless.services.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getAllBooks() {
         return StreamSupport.stream(repository.findAll().spliterator(), false).map(mapper::mapToDto).toList();
+    }
+
+    @Override
+    public Page<BookDto> getAllBooks(Pageable pageable) {
+        return repository.findAll(pageable).map(mapper::mapToDto);
     }
 
     @Override

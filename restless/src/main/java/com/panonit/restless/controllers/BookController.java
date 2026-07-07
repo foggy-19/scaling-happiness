@@ -2,6 +2,8 @@ package com.panonit.restless.controllers;
 
 import com.panonit.restless.domain.dto.BookDto;
 import com.panonit.restless.services.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,8 @@ public class BookController {
 
 
     @GetMapping(path = "/books")
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-        return ResponseEntity.ok(service.getAllBooks());
+    public ResponseEntity<Page<BookDto>> getAllBooks(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllBooks(pageable));
     }
 
     @GetMapping(path = "/books/{isbn}")

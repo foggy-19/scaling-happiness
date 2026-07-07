@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Builder
@@ -16,7 +18,8 @@ public class BookEntity {
     @Id
     private String isbn;
     private String title;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "author_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private AuthorEntity authorEntity;
 }
