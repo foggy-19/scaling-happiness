@@ -1,0 +1,42 @@
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_DB: evently
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_container
+    restart: always
+    ports:
+      - "8888:8080"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    container_name: keycloak
+    restart: always
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "9090:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    command:
+      - start-dev
+      - --db=dev-file
+
+volumes:
+  postgres_data:
+    driver: local
+  keycloak_data:
+    driver: local
