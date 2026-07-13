@@ -1,9 +1,7 @@
 package com.panonit.rereview.controllers;
 
 import com.panonit.rereview.domain.dtos.ErrorDto;
-import com.panonit.rereview.exceptions.BaseException;
-import com.panonit.rereview.exceptions.RestaurantNotFoundException;
-import com.panonit.rereview.exceptions.StorageException;
+import com.panonit.rereview.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,5 +92,29 @@ public class ErrorController {
                 .build();
 
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleReviewNotFoundException(ReviewNotFoundException ex) {
+        log.error("Caught ReviewNotFoundException", ex);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewNotAllowedException.class)
+    public ResponseEntity<ErrorDto> handleReviewNotAllowedException(ReviewNotAllowedException ex) {
+        log.error("Caught ReviewNotAllowedException", ex);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Review is not allowed")
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 }

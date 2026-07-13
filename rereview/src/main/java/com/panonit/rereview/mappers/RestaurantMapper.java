@@ -18,6 +18,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RestaurantMapper {
 
+    @Mapping(source = "reviews", target = "totalReviews", qualifiedByName = "populateTotalReviews")
     RestaurantDto toDto(Restaurant restaurant);
 
     RestaurantCreateUpdateRequest toRestaurantCreateUpdateRequest(RestaurantCreateUpdateRequestDto dto);
