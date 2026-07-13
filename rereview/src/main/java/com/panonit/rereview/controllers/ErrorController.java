@@ -2,14 +2,18 @@ package com.panonit.rereview.controllers;
 
 import com.panonit.rereview.domain.dtos.ErrorDto;
 import com.panonit.rereview.exceptions.BaseException;
+import com.panonit.rereview.exceptions.RestaurantNotFoundException;
 import com.panonit.rereview.exceptions.StorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RestControllerAdvice
@@ -62,5 +66,33 @@ public class ErrorController {
                 .build();
 
         return new ResponseEntity<>(errorDto, HttpStatus.CONTENT_TOO_LARGE);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error("Caught MethodArgumentNotValidException", ex);
+
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + " " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(errorMessage)
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleRestaurantNotFoundException(RestaurantNotFoundException ex) {
+        log.error("Caught RestaurantNotFoundException", ex);
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
 }

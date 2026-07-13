@@ -20,8 +20,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
-@Service
 @Slf4j
+@Service
 public class FileSystemStorageServiceImpl implements StorageService {
 
     private Path root;
