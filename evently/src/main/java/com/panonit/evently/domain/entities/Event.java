@@ -16,7 +16,6 @@ import java.util.UUID;
 @Table(name = "events")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
@@ -29,14 +28,14 @@ public class Event {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "start")
-    private LocalDateTime start;
-
-    @Column(name = "end")
-    private LocalDateTime end;
-
     @Column(name = "venue", nullable = false)
     private String venue;
+
+    @Column(name = "event_start")
+    private LocalDateTime start;
+
+    @Column(name = "event_end")
+    private LocalDateTime end;
 
     @Column(name = "sales_start")
     private LocalDateTime salesStart;

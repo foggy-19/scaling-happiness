@@ -16,7 +16,6 @@ import java.util.UUID;
 @Table(name = "tickets")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ticket {

@@ -15,7 +15,6 @@ import java.util.UUID;
 @Table(name = "ticket_types")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketType {
@@ -30,6 +29,9 @@ public class TicketType {
 
     @Column(name = "price", nullable = false)
     private Double price;
+
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "available")
     private Integer available;
@@ -53,11 +55,11 @@ public class TicketType {
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
         TicketType that = (TicketType) object;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price) && Objects.equals(available, that.available) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price) && Objects.equals(description, that.description) && Objects.equals(available, that.available) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, available, createdAt, updatedAt);
+        return Objects.hash(id, name, price, description, available, createdAt, updatedAt);
     }
 }
