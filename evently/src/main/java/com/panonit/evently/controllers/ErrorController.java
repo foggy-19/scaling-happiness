@@ -1,6 +1,6 @@
 package com.panonit.evently.controllers;
 
-import com.panonit.evently.domain.entities.ErrorDto;
+import com.panonit.evently.domain.dtos.ErrorDto;
 import com.panonit.evently.exceptions.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

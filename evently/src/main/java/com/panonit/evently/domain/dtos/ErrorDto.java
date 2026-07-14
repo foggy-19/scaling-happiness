@@ -1,4 +1,4 @@
-package com.panonit.evently.domain.entities;
+package com.panonit.evently.domain.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
