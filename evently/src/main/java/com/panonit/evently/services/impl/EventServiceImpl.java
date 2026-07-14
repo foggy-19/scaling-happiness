@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -64,6 +65,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<EventDto> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
+        log.info("Listing events for organizer id {}", organizerId);
+
         return eventRepository.findByOrganizerId(organizerId, pageable).map(mapper::toEventDto);
+    }
+
+    @Override
+    public Optional<EventDto> getEventForOrganizer(UUID organizerId, UUID id) {
+        log.info("Finding event for organizer id {}", organizerId);
+
+        return eventRepository.findByIdAndOrganizerId(id, organizerId).map(mapper::toEventDto);
     }
 }

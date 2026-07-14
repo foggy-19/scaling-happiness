@@ -40,6 +40,16 @@ public class EventController {
         return new ResponseEntity<>(service.listEventsForOrganizer(getUserId(jwt), pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EventDto> getEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("id") UUID id
+    ) {
+        return service.getEventForOrganizer(getUserId(jwt), id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     private UUID getUserId(Jwt jwt) {
         return UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
     }
