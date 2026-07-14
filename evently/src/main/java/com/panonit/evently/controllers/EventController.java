@@ -2,17 +2,17 @@ package com.panonit.evently.controllers;
 
 import com.panonit.evently.domain.dtos.CreateEventRequestDto;
 import com.panonit.evently.domain.dtos.CreateEventResponseDto;
+import com.panonit.evently.domain.dtos.EventDto;
 import com.panonit.evently.services.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -29,8 +29,18 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateEventRequestDto request
     ) {
-        UUID organizerId = UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
+        return new ResponseEntity<>(service.createEvent(getUserId(jwt), request), HttpStatus.CREATED);
+    }
 
-        return new ResponseEntity<>(service.createEvent(organizerId, request), HttpStatus.CREATED);
+    @GetMapping
+    public ResponseEntity<Page<EventDto>> listEvents(
+            @AuthenticationPrincipal Jwt jwt,
+            Pageable pageable
+    ) {
+        return new ResponseEntity<>(service.listEventsForOrganizer(getUserId(jwt), pageable), HttpStatus.OK);
+    }
+
+    private UUID getUserId(Jwt jwt) {
+        return UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
     }
 }

@@ -2,6 +2,7 @@ package com.panonit.evently.services.impl;
 
 import com.panonit.evently.domain.dtos.CreateEventRequestDto;
 import com.panonit.evently.domain.dtos.CreateEventResponseDto;
+import com.panonit.evently.domain.dtos.EventDto;
 import com.panonit.evently.domain.entities.Event;
 import com.panonit.evently.domain.entities.TicketType;
 import com.panonit.evently.domain.entities.User;
@@ -12,6 +13,8 @@ import com.panonit.evently.repositories.UserRepository;
 import com.panonit.evently.services.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,5 +60,10 @@ public class EventServiceImpl implements EventService {
         event.setOrganizer(organizer);
 
         return mapper.toCreateEventResponseDto(eventRepository.save(event));
+    }
+
+    @Override
+    public Page<EventDto> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
+        return eventRepository.findByOrganizerId(organizerId, pageable).map(mapper::toEventDto);
     }
 }
