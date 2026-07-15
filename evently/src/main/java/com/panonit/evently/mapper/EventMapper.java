@@ -24,6 +24,8 @@ public interface EventMapper {
     @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toGetTicketTypeResponseDto")
     GetEventResponseDto toGetEventResponseDto(Event event);
 
+    ListPublishedEventResponseDto toListPublishedEventResponseDto(Event event);
+
     @Named("toCreateTicketTypeResponseDto")
     @Mapping(source = "available", target = "totalAvailable")
     CreateTicketTypeResponseDto toCreateTicketTypeResponseDto(TicketType ticketType);

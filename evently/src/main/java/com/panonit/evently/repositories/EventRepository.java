@@ -1,5 +1,6 @@
 package com.panonit.evently.repositories;
 
+import com.panonit.evently.domain.EventStatus;
 import com.panonit.evently.domain.entities.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Page<Event> findByOrganizerId(UUID organizerId, Pageable pageable);
 
     Optional<Event> findByIdAndOrganizerId(UUID id, UUID organizerId);
+
+    Page<Event> findByStatus(EventStatus status, Pageable pageable);
 }

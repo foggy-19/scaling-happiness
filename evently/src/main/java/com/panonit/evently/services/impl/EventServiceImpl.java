@@ -1,5 +1,6 @@
 package com.panonit.evently.services.impl;
 
+import com.panonit.evently.domain.EventStatus;
 import com.panonit.evently.domain.dtos.*;
 import com.panonit.evently.domain.entities.Event;
 import com.panonit.evently.domain.entities.TicketType;
@@ -125,5 +126,12 @@ public class EventServiceImpl implements EventService {
         log.info("Deleting event for organizer id {}", organizerId);
 
         eventRepository.findByIdAndOrganizerId(id, organizerId).ifPresent(eventRepository::delete);
+    }
+
+    @Override
+    public Page<ListPublishedEventResponseDto> listPublishedEvents(Pageable pageable) {
+        log.info("Listing published events");
+
+        return eventRepository.findByStatus(EventStatus.PUBLISHED, pageable).map(mapper::toListPublishedEventResponseDto);
     }
 }

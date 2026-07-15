@@ -3,6 +3,7 @@ package com.panonit.evently.config;
 import com.panonit.evently.filters.UserProvisioningFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,7 +24,11 @@ public class SecurityConfig {
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers(HttpMethod.GET, "/api/v1/published-events").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .addFilterAfter(filter, BearerTokenAuthenticationFilter.class)
