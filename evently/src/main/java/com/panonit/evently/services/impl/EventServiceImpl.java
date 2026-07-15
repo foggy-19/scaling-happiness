@@ -108,14 +108,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<ListEventResponseDto> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
-        log.info("Listing events for organizer id {}", organizerId);
+        log.info("Listing events for organizer ID {}", organizerId);
 
         return eventRepository.findByOrganizerId(organizerId, pageable).map(mapper::toListEventResponseDto);
     }
 
     @Override
     public Optional<GetEventResponseDto> getEventForOrganizer(UUID organizerId, UUID id) {
-        log.info("Finding event for organizer id {}", organizerId);
+        log.info("Finding event for organizer ID {}", organizerId);
 
         return eventRepository.findByIdAndOrganizerId(id, organizerId).map(mapper::toGetEventResponseDto);
     }
@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void deleteEventForOrganizer(UUID organizerId, UUID id) {
-        log.info("Deleting event for organizer id {}", organizerId);
+        log.info("Deleting event for organizer ID {}", organizerId);
 
         eventRepository.findByIdAndOrganizerId(id, organizerId).ifPresent(eventRepository::delete);
     }
@@ -140,5 +140,12 @@ public class EventServiceImpl implements EventService {
         log.info("Searching published events for query {}", query);
 
         return eventRepository.searchEvents(query, pageable).map(mapper::toListPublishedEventResponseDto);
+    }
+
+    @Override
+    public Optional<GetPublishedEventResponseDto> getPublishedEvent(UUID id) {
+        log.info("Getting published event for ID {}", id);
+
+        return eventRepository.findByIdAndStatus(id, EventStatus.PUBLISHED).map(mapper::toGetPublishedEventResponseDto);
     }
 }

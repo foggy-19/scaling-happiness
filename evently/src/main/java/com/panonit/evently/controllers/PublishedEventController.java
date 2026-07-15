@@ -1,15 +1,15 @@
 package com.panonit.evently.controllers;
 
+import com.panonit.evently.domain.dtos.GetPublishedEventResponseDto;
 import com.panonit.evently.domain.dtos.ListPublishedEventResponseDto;
 import com.panonit.evently.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/v1/published-events")
@@ -31,5 +31,12 @@ public class PublishedEventController {
         }
 
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<GetPublishedEventResponseDto> getPublishedEvent(
+            @PathVariable UUID id
+    ) {
+        return service.getPublishedEvent(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

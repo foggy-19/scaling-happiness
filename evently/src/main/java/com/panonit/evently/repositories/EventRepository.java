@@ -21,6 +21,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     Page<Event> findByStatus(EventStatus status, Pageable pageable);
 
+    Optional<Event> findByIdAndStatus(UUID id,  EventStatus status);
+
     @Query(value = "SELECT * FROM events WHERE status = 'PUBLISHED' AND " +
             "(to_tsvector('english', name) @@ plainto_tsquery('english', :searchTerm || ':*') OR " +
             "to_tsvector('english', venue) @@ plainto_tsquery('english', :searchTerm || ':*'))", nativeQuery = true)
