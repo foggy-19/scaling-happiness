@@ -1,5 +1,6 @@
 package com.panonit.evently.mapper;
 
+import com.panonit.evently.domain.dtos.GetTicketResponseDto;
 import com.panonit.evently.domain.dtos.ListTicketResponseDto;
 import com.panonit.evently.domain.dtos.ListTicketTicketTypeResponseDto;
 import com.panonit.evently.domain.entities.Ticket;
@@ -17,4 +18,12 @@ public interface TicketMapper {
 
     @Named("toListTicketTicketTypeResponseDto")
     ListTicketTicketTypeResponseDto toListTicketTicketTypeResponseDto(TicketType ticketType);
+
+    @Mapping(source = "ticket.type.price", target = "price")
+    @Mapping(source = "ticket.type.description", target = "description")
+    @Mapping(source = "ticket.type.event.name", target = "eventName")
+    @Mapping(source = "ticket.type.event.venue", target = "eventVenue")
+    @Mapping(source = "ticket.type.event.start", target = "eventStart")
+    @Mapping(source = "ticket.type.event.end", target = "eventEnd")
+    GetTicketResponseDto toGetTicketResponseDto(Ticket ticket);
 }
