@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("An unexpected error occurred.")
+                .message("An unexpected error occurred")
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("An unexpected base error occurred.")
+                .message("An unexpected base error occurred")
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("User not found.")
+                .message(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Event not found.")
+                .message(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Ticket type not found.")
+                .message(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Unable to update event.")
+                .message(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -134,9 +134,33 @@ public class GlobalExceptionHandler {
 
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("Unable to generate QR code.")
+                .message(ex.getMessage())
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(QrCodeNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleQrCodeNotFoundException(QrCodeNotFoundException ex) {
+        log.error("Caught QrCodeNotFoundException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(TicketSoldOutException.class)
+    public ResponseEntity<ErrorDto> handleTicketSoldOutException(TicketSoldOutException ex) {
+        log.error("Caught TicketSoldOutException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

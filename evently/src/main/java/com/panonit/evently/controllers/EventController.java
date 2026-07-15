@@ -12,8 +12,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
 import java.util.UUID;
+
+import static com.panonit.evently.util.JwtUtil.parseUserId;
 
 @RestController
 @RequestMapping(path = "/api/v1/events")
@@ -27,7 +28,7 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateEventRequestDto request
     ) {
-        return new ResponseEntity<>(service.createEventForOrganizer(getUserId(jwt), request), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.createEventForOrganizer(parseUserId(jwt), request), HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/{id}")
@@ -36,7 +37,7 @@ public class EventController {
             @PathVariable("id") UUID id,
             @Valid @RequestBody UpdateEventRequestDto request
     ) {
-        return ResponseEntity.ok(service.updateEventForOrganizer(getUserId(jwt), id, request));
+        return ResponseEntity.ok(service.updateEventForOrganizer(parseUserId(jwt), id, request));
     }
 
     @GetMapping
@@ -44,7 +45,7 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(service.listEventsForOrganizer(getUserId(jwt), pageable));
+        return ResponseEntity.ok(service.listEventsForOrganizer(parseUserId(jwt), pageable));
     }
 
     @GetMapping("/{id}")
@@ -52,7 +53,7 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id
     ) {
-        return service.getEventForOrganizer(getUserId(jwt), id)
+        return service.getEventForOrganizer(parseUserId(jwt), id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -62,12 +63,8 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id
     ) {
-        service.deleteEventForOrganizer(getUserId(jwt), id);
+        service.deleteEventForOrganizer(parseUserId(jwt), id);
 
         return ResponseEntity.noContent().build();
-    }
-
-    private UUID getUserId(Jwt jwt) {
-        return UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
     }
 }
