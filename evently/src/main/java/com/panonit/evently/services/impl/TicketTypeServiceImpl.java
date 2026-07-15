@@ -40,7 +40,7 @@ public class TicketTypeServiceImpl implements TicketTypeService {
         TicketType ticketType = ticketTypeRepository.findByIdWithLock(ticketTypeId)
                 .orElseThrow(() -> new TicketTypeNotFoundException(String.format("Ticket type with ID %s was not found", ticketTypeId)));
 
-        int purchasedTickets = ticketRepository.countByType(ticketType);
+        int purchasedTickets = ticketRepository.countByTypeId(ticketTypeId);
         if (purchasedTickets + 1 > ticketType.getAvailable()) {
             throw new TicketSoldOutException(String.format("Ticket type with ID %s is sold out", ticketTypeId));
         }
