@@ -1,11 +1,11 @@
 package com.panonit.evently.services.impl;
 
-import com.panonit.evently.domain.dtos.CreateEventRequestDto;
-import com.panonit.evently.domain.dtos.CreateEventResponseDto;
-import com.panonit.evently.domain.dtos.EventDto;
+import com.panonit.evently.domain.dtos.*;
 import com.panonit.evently.domain.entities.Event;
 import com.panonit.evently.domain.entities.TicketType;
 import com.panonit.evently.domain.entities.User;
+import com.panonit.evently.exceptions.EventNotFoundException;
+import com.panonit.evently.exceptions.EventUpdateException;
 import com.panonit.evently.exceptions.UserNotFoundException;
 import com.panonit.evently.mapper.EventMapper;
 import com.panonit.evently.repositories.EventRepository;
@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
 
     @Override
-    public CreateEventResponseDto createEvent(UUID organizerId, CreateEventRequestDto request) {
+    @Transactional
+    public CreateEventResponseDto createEventForOrganizer(UUID organizerId, CreateEventRequestDto request) {
         log.info("Creating event for organizer id {}", organizerId);
 
         User organizer = userRepository.findById(organizerId)
@@ -61,6 +63,54 @@ public class EventServiceImpl implements EventService {
         event.setOrganizer(organizer);
 
         return mapper.toCreateEventResponseDto(eventRepository.save(event));
+    }
+
+    @Override
+    @Transactional
+    public UpdateEventResponseDto updateEventForOrganizer(UUID organizerId, UUID id, UpdateEventRequestDto request) {
+        log.info("Updating event for organizer id {}", organizerId);
+
+        if (request.getId() == null) {
+            throw new EventUpdateException("Event ID cannot be null");
+        }
+
+        if (!request.getId().equals(id)) {
+            throw new EventUpdateException("Cannot update the ID of an event");
+        }
+
+        Event event = eventRepository.findByIdAndOrganizerId(id, organizerId)
+                .orElseThrow(() -> new EventNotFoundException(String.format("Event with ID %s not found", id)));
+
+        event.setName(request.getName());
+        event.setVenue(request.getVenue());
+        event.setStart(request.getStart());
+        event.setEnd(request.getEnd());
+        event.setSalesStart(request.getSalesStart());
+        event.setSalesEnd(request.getSalesEnd());
+        event.setStatus(request.getStatus());
+
+        List<TicketType> ticketTypes = request.getTicketTypes().stream().map(ctt -> {
+            TicketType tt = new TicketType();
+            tt.setName(ctt.getName());
+            tt.setPrice(ctt.getPrice());
+            tt.setDescription(ctt.getDescription());
+            tt.setAvailable(ctt.getTotalAvailable());
+            tt.setEvent(event);
+
+            return tt;
+        }).toList();
+        event.getTicketTypes().clear();
+        event.getTicketTypes().addAll(ticketTypes);
+
+        return mapper.toUpdateEventResponseDto(eventRepository.save(event));
+    }
+
+    @Override
+    @Transactional
+    public void deleteEventForOrganizer(UUID organizerId, UUID id) {
+        log.info("Deleting event for organizer id {}", organizerId);
+
+        eventRepository.findByIdAndOrganizerId(id, organizerId).ifPresent(eventRepository::delete);
     }
 
     @Override

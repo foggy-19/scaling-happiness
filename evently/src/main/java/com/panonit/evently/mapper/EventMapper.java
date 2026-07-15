@@ -1,10 +1,7 @@
 package com.panonit.evently.mapper;
 
 
-import com.panonit.evently.domain.dtos.CreateEventResponseDto;
-import com.panonit.evently.domain.dtos.CreateTicketTypeResponseDto;
-import com.panonit.evently.domain.dtos.EventDto;
-import com.panonit.evently.domain.dtos.TicketTypeDto;
+import com.panonit.evently.domain.dtos.*;
 import com.panonit.evently.domain.entities.Event;
 import com.panonit.evently.domain.entities.TicketType;
 import org.mapstruct.Mapper;
@@ -21,6 +18,9 @@ public interface EventMapper {
     @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toCreateTicketTypeResponseDto")
     CreateEventResponseDto toCreateEventResponseDto(Event event);
 
+    @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toUpdateTicketTypeResponseDto")
+    UpdateEventResponseDto toUpdateEventResponseDto(Event event);
+
     @Named("toTicketTypeDto")
     @Mapping(source = "available", target = "totalAvailable")
     TicketTypeDto toTicketTypeDto(TicketType ticketType);
@@ -28,4 +28,8 @@ public interface EventMapper {
     @Named("toCreateTicketTypeResponseDto")
     @Mapping(source = "available", target = "totalAvailable")
     CreateTicketTypeResponseDto toCreateTicketTypeResponseDto(TicketType ticketType);
+
+    @Named("toUpdateTicketTypeResponseDto")
+    @Mapping(source = "available", target = "totalAvailable")
+    UpdateTicketTypeResponseDto toUpdateTicketTypeResponseDto(TicketType ticketType);
 }

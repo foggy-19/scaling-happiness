@@ -1,8 +1,6 @@
 package com.panonit.evently.controllers;
 
-import com.panonit.evently.domain.dtos.CreateEventRequestDto;
-import com.panonit.evently.domain.dtos.CreateEventResponseDto;
-import com.panonit.evently.domain.dtos.EventDto;
+import com.panonit.evently.domain.dtos.*;
 import com.panonit.evently.services.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,26 @@ public class EventController {
             @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody CreateEventRequestDto request
     ) {
-        return new ResponseEntity<>(service.createEvent(getUserId(jwt), request), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.createEventForOrganizer(getUserId(jwt), request), HttpStatus.CREATED);
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<UpdateEventResponseDto> updateEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("id") UUID id,
+            @Valid @RequestBody UpdateEventRequestDto request
+    ) {
+        return new ResponseEntity<>(service.updateEventForOrganizer(getUserId(jwt), id, request), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("id") UUID id
+    ) {
+        service.deleteEventForOrganizer(getUserId(jwt), id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping

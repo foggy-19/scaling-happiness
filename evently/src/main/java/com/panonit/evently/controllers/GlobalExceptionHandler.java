@@ -1,8 +1,7 @@
 package com.panonit.evently.controllers;
 
 import com.panonit.evently.domain.dtos.ErrorDto;
-import com.panonit.evently.exceptions.BaseException;
-import com.panonit.evently.exceptions.UserNotFoundException;
+import com.panonit.evently.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -88,6 +87,42 @@ public class GlobalExceptionHandler {
         ErrorDto error = ErrorDto.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message("User not found.")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEventNotFoundException(EventNotFoundException ex) {
+        log.error("Caught EventNotFoundException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Event not found.")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TicketTypeNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleTicketTypeNotFoundException(TicketTypeNotFoundException ex) {
+        log.error("Caught TicketTypeNotFoundException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Ticket type not found.")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EventUpdateException.class)
+    public ResponseEntity<ErrorDto> handleEventUpdateException(EventUpdateException ex) {
+        log.error("Caught EventUpdateException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Unable to update event.")
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
