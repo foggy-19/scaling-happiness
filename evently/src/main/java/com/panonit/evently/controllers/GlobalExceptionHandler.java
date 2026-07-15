@@ -127,4 +127,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(QrCodeGenerationException.class)
+    public ResponseEntity<ErrorDto> handleQrCodeGenerationException(QrCodeGenerationException ex) {
+        log.error("Caught QrCodeGenerationException: ", ex);
+
+        ErrorDto error = ErrorDto.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("Unable to generate QR code.")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

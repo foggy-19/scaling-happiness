@@ -21,10 +21,9 @@ public class QrCode {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "value", columnDefinition = "TEXT", nullable = false)
     private String value;
 
     @Column(name = "status", nullable = false)
