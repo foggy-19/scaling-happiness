@@ -1,9 +1,12 @@
 package com.panonit.evently.services;
 
-import com.panonit.evently.domain.entities.QrCode;
 import com.panonit.evently.domain.entities.Ticket;
+
+import java.util.UUID;
 
 public interface QrCodeService {
 
-    QrCode generateQrCode(Ticket ticket);
+    void generateQrCode(Ticket ticket);
+
+    byte[] getQrCodeImageForUserAndTicket(UUID userId, UUID ticketId);
 }

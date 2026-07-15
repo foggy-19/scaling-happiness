@@ -2,10 +2,13 @@ package com.panonit.evently.controllers;
 
 import com.panonit.evently.domain.dtos.GetTicketResponseDto;
 import com.panonit.evently.domain.dtos.ListTicketResponseDto;
+import com.panonit.evently.services.QrCodeService;
 import com.panonit.evently.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -23,17 +26,32 @@ import static com.panonit.evently.util.JwtUtil.parseUserId;
 @RequiredArgsConstructor
 public class TicketController {
 
-    private final TicketService service;
+    private final TicketService ticketService;
+    private final QrCodeService qrCodeService;
 
     @GetMapping
     public ResponseEntity<Page<ListTicketResponseDto>> listTickets(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
-        return ResponseEntity.ok(service.listTicketsForUser(parseUserId(jwt), pageable));
+        return ResponseEntity.ok(ticketService.listTicketsForUser(parseUserId(jwt), pageable));
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<GetTicketResponseDto> getTicket(@AuthenticationPrincipal Jwt jwt, @PathVariable(name = "id") UUID ticketId) {
-        return service.getTicketForUser(parseUserId(jwt), ticketId)
+        return ticketService.getTicketForUser(parseUserId(jwt), ticketId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/{id}/qr-codes")
+    public ResponseEntity<byte[]> getTicketImage(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable(name = "id") UUID ticketId
+    ) {
+        byte[] image = qrCodeService.getQrCodeImageForUserAndTicket(parseUserId(jwt), ticketId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentLength(image.length);
+
+        return ResponseEntity.ok().headers(headers).body(image);
     }
 }

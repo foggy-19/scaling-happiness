@@ -9,6 +9,7 @@ import com.panonit.evently.domain.QrCodeStatus;
 import com.panonit.evently.domain.entities.QrCode;
 import com.panonit.evently.domain.entities.Ticket;
 import com.panonit.evently.exceptions.QrCodeGenerationException;
+import com.panonit.evently.exceptions.QrCodeNotFoundException;
 import com.panonit.evently.repositories.QrCodeRepository;
 import com.panonit.evently.services.QrCodeService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class QrCodeServiceImpl implements QrCodeService {
     private final QrCodeRepository qrCodeRepository;
 
     @Override
-    public QrCode generateQrCode(Ticket ticket) {
+    public void generateQrCode(Ticket ticket) {
         log.info("Generating QR code for ticket {}", ticket);
 
         try {
@@ -47,11 +48,27 @@ public class QrCodeServiceImpl implements QrCodeService {
             qrCode.setStatus(QrCodeStatus.ACTIVE);
             qrCode.setTicket(ticket);
 
-            return qrCodeRepository.saveAndFlush(qrCode);
+            qrCodeRepository.saveAndFlush(qrCode);
         } catch (WriterException e) {
             throw new QrCodeGenerationException("Unable to generate QR code", e);
         } catch (IOException e) {
             throw new QrCodeGenerationException("Unable to generate QR code image", e);
+        }
+    }
+
+    @Override
+    public byte[] getQrCodeImageForUserAndTicket(UUID userId, UUID ticketId) {
+        log.info("Getting QR code for ticket {}", ticketId);
+
+        QrCode qrCode = qrCodeRepository.findByTicketIdAndTicketPurchaserId(ticketId, userId)
+                .orElseThrow(() -> new QrCodeNotFoundException(String.format("QR code with id %s not found", ticketId)));
+
+        try {
+            return Base64.getDecoder().decode(qrCode.getValue());
+        } catch (IllegalArgumentException e) {
+            log.error("Error decoding QR code for ticket {}", ticketId, e);
+
+            throw new QrCodeNotFoundException("Invalid QR code format");
         }
     }
 
