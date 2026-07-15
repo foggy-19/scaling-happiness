@@ -36,7 +36,25 @@ public class EventController {
             @PathVariable("id") UUID id,
             @Valid @RequestBody UpdateEventRequestDto request
     ) {
-        return new ResponseEntity<>(service.updateEventForOrganizer(getUserId(jwt), id, request), HttpStatus.OK);
+        return ResponseEntity.ok(service.updateEventForOrganizer(getUserId(jwt), id, request));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ListEventResponseDto>> listEvents(
+            @AuthenticationPrincipal Jwt jwt,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.listEventsForOrganizer(getUserId(jwt), pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GetEventResponseDto> getEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("id") UUID id
+    ) {
+        return service.getEventForOrganizer(getUserId(jwt), id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping(path = "/{id}")
@@ -46,25 +64,7 @@ public class EventController {
     ) {
         service.deleteEventForOrganizer(getUserId(jwt), id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<EventDto>> listEvents(
-            @AuthenticationPrincipal Jwt jwt,
-            Pageable pageable
-    ) {
-        return new ResponseEntity<>(service.listEventsForOrganizer(getUserId(jwt), pageable), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEvent(
-            @AuthenticationPrincipal Jwt jwt,
-            @PathVariable("id") UUID id
-    ) {
-        return service.getEventForOrganizer(getUserId(jwt), id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.noContent().build();
     }
 
     private UUID getUserId(Jwt jwt) {

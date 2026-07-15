@@ -12,18 +12,17 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EventMapper {
 
-    @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toTicketTypeDto")
-    EventDto toEventDto(Event event);
-
     @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toCreateTicketTypeResponseDto")
     CreateEventResponseDto toCreateEventResponseDto(Event event);
 
     @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toUpdateTicketTypeResponseDto")
     UpdateEventResponseDto toUpdateEventResponseDto(Event event);
 
-    @Named("toTicketTypeDto")
-    @Mapping(source = "available", target = "totalAvailable")
-    TicketTypeDto toTicketTypeDto(TicketType ticketType);
+    @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toListTicketTypeResponseDto")
+    ListEventResponseDto toListEventResponseDto(Event event);
+
+    @Mapping(source = "ticketTypes", target = "ticketTypes", qualifiedByName = "toGetTicketTypeResponseDto")
+    GetEventResponseDto toGetEventResponseDto(Event event);
 
     @Named("toCreateTicketTypeResponseDto")
     @Mapping(source = "available", target = "totalAvailable")
@@ -32,4 +31,12 @@ public interface EventMapper {
     @Named("toUpdateTicketTypeResponseDto")
     @Mapping(source = "available", target = "totalAvailable")
     UpdateTicketTypeResponseDto toUpdateTicketTypeResponseDto(TicketType ticketType);
+
+    @Named("toListTicketTypeResponseDto")
+    @Mapping(source = "available", target = "totalAvailable")
+    ListTicketTypeResponseDto toListTicketTypeResponseDto(TicketType ticketType);
+
+    @Named("toGetTicketTypeResponseDto")
+    @Mapping(source = "available", target = "totalAvailable")
+    GetTicketTypeResponseDto toGetTicketTypeResponseDto(TicketType ticketType);
 }

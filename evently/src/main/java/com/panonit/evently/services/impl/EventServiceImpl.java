@@ -106,24 +106,24 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Page<ListEventResponseDto> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
+        log.info("Listing events for organizer id {}", organizerId);
+
+        return eventRepository.findByOrganizerId(organizerId, pageable).map(mapper::toListEventResponseDto);
+    }
+
+    @Override
+    public Optional<GetEventResponseDto> getEventForOrganizer(UUID organizerId, UUID id) {
+        log.info("Finding event for organizer id {}", organizerId);
+
+        return eventRepository.findByIdAndOrganizerId(id, organizerId).map(mapper::toGetEventResponseDto);
+    }
+
+    @Override
     @Transactional
     public void deleteEventForOrganizer(UUID organizerId, UUID id) {
         log.info("Deleting event for organizer id {}", organizerId);
 
         eventRepository.findByIdAndOrganizerId(id, organizerId).ifPresent(eventRepository::delete);
-    }
-
-    @Override
-    public Page<EventDto> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
-        log.info("Listing events for organizer id {}", organizerId);
-
-        return eventRepository.findByOrganizerId(organizerId, pageable).map(mapper::toEventDto);
-    }
-
-    @Override
-    public Optional<EventDto> getEventForOrganizer(UUID organizerId, UUID id) {
-        log.info("Finding event for organizer id {}", organizerId);
-
-        return eventRepository.findByIdAndOrganizerId(id, organizerId).map(mapper::toEventDto);
     }
 }

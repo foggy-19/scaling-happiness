@@ -13,9 +13,9 @@ public interface EventService {
 
     UpdateEventResponseDto updateEventForOrganizer(UUID organizerId, UUID id, UpdateEventRequestDto request);
 
+    Page<ListEventResponseDto> listEventsForOrganizer(UUID organizerId, Pageable pageable);
+
+    Optional<GetEventResponseDto> getEventForOrganizer(UUID organizerId, UUID id);
+
     void deleteEventForOrganizer(UUID organizerId, UUID id);
-
-    Page<EventDto> listEventsForOrganizer(UUID organizerId, Pageable pageable);
-
-    Optional<EventDto> getEventForOrganizer(UUID organizerId, UUID id);
 }
