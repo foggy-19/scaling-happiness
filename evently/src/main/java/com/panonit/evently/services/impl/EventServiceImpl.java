@@ -134,4 +134,11 @@ public class EventServiceImpl implements EventService {
 
         return eventRepository.findByStatus(EventStatus.PUBLISHED, pageable).map(mapper::toListPublishedEventResponseDto);
     }
+
+    @Override
+    public Page<ListPublishedEventResponseDto> searchPublishedEvents(String query, Pageable pageable) {
+        log.info("Searching published events for query {}", query);
+
+        return eventRepository.searchEvents(query, pageable).map(mapper::toListPublishedEventResponseDto);
+    }
 }
